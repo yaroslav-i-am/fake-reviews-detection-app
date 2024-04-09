@@ -33,5 +33,5 @@ prob = data[0][1]
 if len(text.strip()) > 0:
     st.write(f"Отзыв сгенерирован с вероятностью {round(prob * 100, 2)}%")
 
-chart = st.empty()
-chart.bar_chart(df, y="Вероятность")
+    chart = st.empty()
+    chart.bar_chart(df, y="Вероятность")
