@@ -1,13 +1,13 @@
 import streamlit as st
 from PIL import Image
-import pickle
+import dill
 import pandas as pd
 
 import nltk
 nltk.download('punkt')
 
 with open('finalized_model.pkl', 'rb') as f:
-    count_vec, clf = pickle.load(f)
+    count_vec, clf = dill.load(f)
 
 df = pd.DataFrame({"Вероятность": [0, 0]}, index=["Человек", "YaGPT"])
 
