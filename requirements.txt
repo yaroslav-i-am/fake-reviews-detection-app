@@ -1,5 +1,5 @@
 nltk
 pillow
-pickle5
+pickle
 pandas
 scikit-learn
