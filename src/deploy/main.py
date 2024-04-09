@@ -22,7 +22,7 @@ human_words = ['продавца', 'синтетика', 'доставка', 'п
                'прислали']
 
 st.header("Определение сгенерированных отзывов")
-image = Image.open('wordcloud4.png')
+image = Image.open('./src/deploy/wordcloud4.png')
 st.image(image)
 text = st.text_area(label="Введите отзыв", height=200)
 
