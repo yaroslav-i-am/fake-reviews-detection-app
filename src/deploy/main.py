@@ -2,10 +2,9 @@ import streamlit as st
 from PIL import Image
 import pickle
 import pandas as pd
-import time
 
-# import nltk
-# nltk.download('punkt')
+import nltk
+nltk.download('punkt')
 
 with open('finalized_model.pkl', 'rb') as f:
     count_vec, clf = pickle.load(f)
