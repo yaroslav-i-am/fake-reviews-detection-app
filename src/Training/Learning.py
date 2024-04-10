@@ -23,7 +23,7 @@ class Models:
             pickle.dump(self.model, file)
 
     def log_reg(self, x_data=None, y_data=None):
-        path = 'models/log_reg.pkl'
+        path = './Training/models/log_reg.pkl'
         if x_data is not None and y_data is not None:
             self.model = LogisticRegression()
             self.model.fit(x_data, y_data)
@@ -32,7 +32,7 @@ class Models:
             self.__load_model(path)
 
     def train_xgb(self, x_data=None, y_data=None):
-        path = 'models/xgb_classifier.pkl'
+        path = './Training/models/xgb_classifier.pkl'
         if x_data is not None and y_data is not None:
             self.model = XGBClassifier(
                 learning_rate=0.02,
@@ -46,7 +46,7 @@ class Models:
             self.__load_model(path)
 
     def train_rf(self, x_data=None, y_data=None):
-        path = 'models/rf.pkl'
+        path = './Training/models/rf.pkl'
         if x_data is not None and y_data is not None:
             self.model = RandomForestClassifier()
             self.model.fit(x_data, y_data)

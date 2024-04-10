@@ -19,7 +19,7 @@ class Vectorizer:
 
     def bag_of_words_embaddings(self, df: pd.DataFrame, retrain=False):
         preproc = Preproccesing(df)
-        path = './Training/models/embeddings/bow'
+        path = './Training/models/bow'
         if os.path.exists(path) and not retrain:
             self.dict = pickle.load(open(path, 'rb'))
         else:
@@ -33,7 +33,7 @@ class Vectorizer:
 
     def tfidf(self, df: pd.DataFrame, retrain=False):
         preproc = Preproccesing(df)
-        path = './Training/models/embeddings/tfidf'
+        path = './Training/models/tfidf'
         if os.path.exists(path) and not retrain:
             self.dict = pickle.load(open(path, 'rb'))
         else:
@@ -47,7 +47,7 @@ class Vectorizer:
 
     def fasttext(self, df: pd.DataFrame, retrain=False):
         preproc = Preproccesing(df)
-        path = './Training/models/embeddings/fasttext'
+        path = './Training/models/fasttext'
         if os.path.exists(path) and not retrain:
             self.dict = FastText.load(path)
         else:

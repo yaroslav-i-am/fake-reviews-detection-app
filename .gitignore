@@ -159,5 +159,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
-/src/Training/models/classifications
-/src/Training/models/embaddings
+
+src/text_eda/reviews_preprocessed_with_textstat.csv
+src/text_eda/unique_reviews.csv
