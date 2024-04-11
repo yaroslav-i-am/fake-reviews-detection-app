@@ -10,9 +10,11 @@ from nltk.tokenize import word_tokenize
 from nltk.tokenize import RegexpTokenizer
 import boto3
 
-nltk.download('punkt')
-reg_tok = RegexpTokenizer(r'[\w\-]+')
-white_tok = WhitespaceTokenizer()
+
+@st.cache_resource(ttl=24 * 60 * 60)
+def set_tokenizers():
+    nltk.download('punkt')
+    return RegexpTokenizer(r'[\w\-]+'), WhitespaceTokenizer()
 
 
 def process_text(text):
@@ -79,6 +81,7 @@ def has_highlights(processed_text):
     return has_tuple
 
 
+@st.cache_resource(ttl=60 * 60)
 def download_classifiers():
     global f, data, count_vec, clf
     with open('./src/deploy/config.pkl', 'rb') as f:
@@ -99,6 +102,7 @@ def download_classifiers():
             return dill.loads(data['Body'].read())
 
 
+@st.cache_resource(ttl=3 * 60 * 60)
 def find_gpt_words():
     global f, gpt_words
     with open('./src/deploy/n_gram_model.pkl', 'rb') as f:
@@ -112,6 +116,7 @@ def find_gpt_words():
     return set(coefs.tail(n).values[:, 0])
 
 
+reg_tok, white_tok = set_tokenizers()
 count_vec, clf = download_classifiers()
 
 # with open('./src/deploy/finalized_model2.pkl', 'rb') as f:
@@ -119,15 +124,28 @@ count_vec, clf = download_classifiers()
 
 
 gpt_words = find_gpt_words()
-with open('./src/deploy/reviews.pkl', 'rb') as f:
-    options = dill.load(f)
+
+
+@st.cache_resource(ttl=3 * 60 * 60)
+def load_reviews():
+    with open('./src/deploy/reviews.pkl', 'rb') as f:
+        return dill.load(f)
+
+
+@st.cache_resource(ttl=3 * 60 * 60)
+def load_intro():
+    st.header("Определение сгенерированных отзывов")
+    image = Image.open('./src/deploy/wordcloud4.png')
+    st.image(image)
+
+
+options = load_reviews()
 with st.sidebar:
     option = st.selectbox(
         'Выбрать пример',
         list(options.keys()))
-st.header("Определение сгенерированных отзывов")
-image = Image.open('./src/deploy/wordcloud4.png')
-st.image(image)
+
+load_intro()
 
 text = st.text_area(label="Введите отзыв", value=options[option], height=200)
 
