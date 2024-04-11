@@ -2,36 +2,147 @@ import streamlit as st
 from PIL import Image
 import dill
 import pandas as pd
+from annotated_text import annotated_text
 
 import nltk
+from nltk.tokenize import WhitespaceTokenizer
+from nltk.tokenize import word_tokenize
+from nltk.tokenize import RegexpTokenizer
+import boto3
+
 nltk.download('punkt')
+reg_tok = RegexpTokenizer(r'[\w\-]+')
+white_tok = WhitespaceTokenizer()
 
-with open('./src/deploy/finalized_model.pkl', 'rb') as f:
-    count_vec, clf = dill.load(f)
 
-df = pd.DataFrame({"Вероятность": [0, 0]}, index=["Человек", "YaGPT"])
+def process_text(text):
+    processed_text = []
+    words = reg_tok.tokenize(text.lower())
+    words_set = set(words)
+    found_words = set()
+    for i in range(len(words) - 2):
+        if ' '.join(words[i: i + 3]) in gpt_words:
+            found_words.update([i, i + 1, i + 2])
+    i = 0
+    for tok in word_tokenize(text):
+        if tok.lower() in words_set and i != 0:
+            processed_text.append(' ')
+        if tok.lower() in words_set and i in found_words:
+            processed_text.append((tok, "гпт", '#Ff7e81'))
+        else:
+            processed_text.append(tok)
 
-bot_words = ['заявленному', 'маска', 'набор', 'рюкзак', 'покрывало', 'оказался',
-             'подошёл', 'доволен', 'кроссовки', 'ожиданий', 'эту', 'книга',
-             'наушники', 'дорого', 'приве', 'неудобная', 'неудобно', '—',
-             'куртка-рубашка', 'купил']
+        if tok.lower() in words_set:
+            i += 1
+    return processed_text
 
-human_words = ['продавца', 'синтетика', 'доставка', 'пришло', 'рост', 'пришел',
-               'свитер', 'вернули', 'заказ', 'кофта', 'спасибо', 'фото',
-               'подошел', 'до', 'все', 'продавец', 'пришли', 'заказала', 'рукава',
-               'прислали']
 
+def connect_strings(processed_text):
+    strings = []
+    prev_tup = True
+    new_processed_text = []
+    for block in processed_text:
+        if type(block) == str and prev_tup:
+            strings = [block]
+            prev_tup = False
+        elif type(block) == str:
+            strings.append(block)
+        else:
+            if not prev_tup:
+                new_processed_text.append(''.join(strings))
+            new_processed_text.append(block)
+            prev_tup = True
+    new_processed_text.append(''.join(strings))
+    return new_processed_text
+
+
+def punkt_between(i):
+    return type(processed_text[i]) == tuple and type(processed_text[i + 1]) \
+           == str and type(processed_text[i + 2]) == tuple \
+           and len(reg_tok.tokenize(processed_text[i + 1])) == 0
+
+
+def connect_highlights(processed_text):
+    for i in range(len(processed_text) - 2):
+        if punkt_between(i):
+            processed_text[i + 2] = (processed_text[i][0] + processed_text[i + 1]
+                                     + processed_text[i + 2][0], "гпт", '#Ff7e81')
+            processed_text[i] = ''
+            processed_text[i + 1] = ''
+
+
+def has_highlights(processed_text):
+    has_tuple = False
+    for block in processed_text:
+        if type(block) is tuple:
+            has_tuple = True
+    return has_tuple
+
+
+def download_classifiers():
+    global f, data, count_vec, clf
+    with open('./src/deploy/config.pkl', 'rb') as f:
+        conf_a, conf_b = dill.load(f)
+    bucket_name = 'fake-reviews'
+    session = boto3.session.Session()
+    ENDPOINT = "https://storage.yandexcloud.net"
+    session = boto3.Session(
+        aws_access_key_id=(conf_a),
+        aws_secret_access_key=(conf_b),
+        region_name="ru-central1",
+    )
+    s3 = session.client(
+        "s3", endpoint_url=ENDPOINT)
+    for key in s3.list_objects(Bucket=bucket_name)['Contents']:
+        if key['Key'] == 'model.pkl':
+            data = s3.get_object(Bucket=bucket_name, Key=key.get('Key'))
+            return dill.loads(data['Body'].read())
+
+
+def find_gpt_words():
+    global f, gpt_words
+    with open('./src/deploy/n_gram_model.pkl', 'rb') as f:
+        count_vec_ngram, clf_ngram = dill.load(f)
+    coefs = pd.DataFrame(data={
+        'features': count_vec_ngram.get_feature_names_out(),
+        'coef': clf_ngram.coef_.flatten()
+    })
+    coefs = coefs.sort_values('coef')
+    n = 20000
+    return set(coefs.tail(n).values[:, 0])
+
+
+count_vec, clf = download_classifiers()
+
+# with open('./src/deploy/finalized_model2.pkl', 'rb') as f:
+#     count_vec, clf = dill.load(f)
+
+
+gpt_words = find_gpt_words()
+with open('./src/deploy/reviews.pkl', 'rb') as f:
+    options = dill.load(f)
+with st.sidebar:
+    option = st.selectbox(
+        'Выбрать пример',
+        list(options.keys()))
 st.header("Определение сгенерированных отзывов")
-image = Image.open('./src/deploy/wordcloud4.png')
+image = Image.open('wordcloud4.png')
 st.image(image)
-text = st.text_area(label="Введите отзыв", height=200)
 
+text = st.text_area(label="Введите отзыв", value=options[option], height=200)
 
 data = clf.predict_proba(count_vec.transform([text]))
-df.iloc[:, 0] = data.T
 prob = data[0][1]
-if len(text.strip()) > 0:
+if st.button('Проанализировать') and len(text.strip()) > 0:
     st.write(f"Отзыв сгенерирован с вероятностью {round(prob * 100, 2)}%")
 
-    chart = st.empty()
-    chart.bar_chart(df, y="Вероятность")
+    st.subheader("Разбор отзыва")
+    st.write("Некоторые словосочетания ГПТ употребляет гораздо чаще, чем человек, приведём их ниже")
+
+    processed_text = process_text(text)
+    processed_text = connect_strings(processed_text)
+    if has_highlights(processed_text):
+        connect_highlights(processed_text)
+        annotated_text(processed_text)
+    else:
+        st.write('В данном отзыве таких словосочетаний нет')
