@@ -144,7 +144,7 @@ with st.sidebar:
     option = st.selectbox(
         'Выбрать пример',
         list(options.keys()))
-
+st.write("debug")
 load_intro()
 
 text = st.text_area(label="Введите отзыв", value=options[option], height=200)
