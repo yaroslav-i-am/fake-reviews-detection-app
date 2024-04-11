@@ -83,7 +83,6 @@ def has_highlights(processed_text):
 
 @st.cache_resource(ttl=60 * 60)
 def download_classifiers():
-    global f, data, count_vec, clf
     with open('./src/deploy/config.pkl', 'rb') as f:
         conf_a, conf_b = dill.load(f)
     bucket_name = 'fake-reviews'
@@ -104,7 +103,6 @@ def download_classifiers():
 
 @st.cache_resource(ttl=3 * 60 * 60)
 def find_gpt_words():
-    global f, gpt_words
     with open('./src/deploy/n_gram_model.pkl', 'rb') as f:
         count_vec_ngram, clf_ngram = dill.load(f)
     coefs = pd.DataFrame(data={
@@ -144,7 +142,6 @@ with st.sidebar:
     option = st.selectbox(
         'Выбрать пример',
         list(options.keys()))
-st.write("debug")
 load_intro()
 
 text = st.text_area(label="Введите отзыв", value=options[option], height=200)
