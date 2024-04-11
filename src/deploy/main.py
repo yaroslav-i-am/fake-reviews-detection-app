@@ -126,7 +126,7 @@ with st.sidebar:
         'Выбрать пример',
         list(options.keys()))
 st.header("Определение сгенерированных отзывов")
-image = Image.open('wordcloud4.png')
+image = Image.open('./src/deploy/wordcloud4.png')
 st.image(image)
 
 text = st.text_area(label="Введите отзыв", value=options[option], height=200)
