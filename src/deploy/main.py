@@ -137,7 +137,7 @@ if st.button('Проанализировать') and len(text.strip()) > 0:
     st.write(f"Отзыв сгенерирован с вероятностью {round(prob * 100, 2)}%")
 
     st.subheader("Разбор отзыва")
-    st.write("Некоторые словосочетания ГПТ употребляет гораздо чаще, чем человек, приведём их ниже")
+    st.write("Некоторые словосочетания ГПТ употребляет гораздо чаще, чем человек")
 
     processed_text = process_text(text)
     processed_text = connect_strings(processed_text)
