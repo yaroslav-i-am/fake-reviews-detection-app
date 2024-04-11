@@ -25,6 +25,8 @@ def process_text(text):
     for i in range(len(words) - 2):
         if ' '.join(words[i: i + 3]) in gpt_words:
             found_words.update([i, i + 1, i + 2])
+        elif ' '.join(words[i: i + 2]) in gpt_words:
+            found_words.update([i, i + 1])
     i = 0
     for tok in word_tokenize(text):
         if tok.lower() in words_set and i != 0:
@@ -110,8 +112,7 @@ def find_gpt_words():
         'coef': clf_ngram.coef_.flatten()
     })
     coefs = coefs.sort_values('coef')
-    n = 20000
-    return set(coefs.tail(n).values[:, 0])
+    return set(coefs.tail(int(len(coefs) / 4)).values[:, 0])
 
 
 reg_tok, white_tok = set_tokenizers()
