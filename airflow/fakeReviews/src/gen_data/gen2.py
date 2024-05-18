@@ -93,6 +93,7 @@ class FakeReviews():
 
         for idx in range(count):
             prompt = {
+
             "modelUri": "gpt://**код**/yandexgpt-lite",
             "completionOptions":
             {
@@ -116,6 +117,7 @@ class FakeReviews():
             headers = {
                 "Content-Type": "application/json",
                 "Authorization": "Api-Key **код**"
+
             }
     
             response = req.post(url, headers=headers, json=prompt)
@@ -124,3 +126,4 @@ class FakeReviews():
         s3_hook = S3Hook("my_conn_S3")
         pickle_ids_obj = pickle.dumps(self.ids)
         s3_hook.load_bytes(pickle_ids_obj, "data/ids2.pkl", bucket_name="fake-reviews", replace=True)
+
