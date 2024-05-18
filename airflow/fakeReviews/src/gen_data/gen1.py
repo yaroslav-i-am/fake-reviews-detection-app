@@ -91,7 +91,7 @@ class FakeReviews():
 
         for idx in range(count):
             prompt = {
-            "modelUri": "gpt://b1gk977jmnl6r1ullhjc/yandexgpt-lite",
+            "modelUri": "gpt://**код**/yandexgpt-lite",
             "completionOptions": {
                 "stream": False,
                 "temperature": 0.4,
@@ -121,7 +121,8 @@ class FakeReviews():
             url = "https://llm.api.cloud.yandex.net/foundationModels/v1/completionAsync"
             headers = {
                 "Content-Type": "application/json",
-                "Authorization": "Api-Key AQVNx-tao4wYYKaJsRxO8XuOX9OXSemc3JHLSPIH"
+                "Authorization": "Api-Key **ключ**"
+
         
             }
     

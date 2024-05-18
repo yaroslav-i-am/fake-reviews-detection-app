@@ -25,7 +25,7 @@ class RecFakeReviews:
                 url = "https://llm.api.cloud.yandex.net/operations/" + ID.strip()
                 headers = {
                     "Content-Type": "application/json",
-                    "Authorization": "Api-Key AQVNx-tao4wYYKaJsRxO8XuOX9OXSemc3JHLSPIH"
+                    "Authorization": "Api-Key **код**"
             
                 }
             

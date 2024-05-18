@@ -93,7 +93,8 @@ class FakeReviews():
 
         for idx in range(count):
             prompt = {
-            "modelUri": "gpt://b1g35k6h3ihlmr0bq67l/yandexgpt-lite",
+
+            "modelUri": "gpt://**код**/yandexgpt-lite",
             "completionOptions":
             {
                 "stream": False,
@@ -115,7 +116,8 @@ class FakeReviews():
             url = "https://llm.api.cloud.yandex.net/foundationModels/v1/completionAsync"
             headers = {
                 "Content-Type": "application/json",
-                "Authorization": "Api-Key AQVN3kcZSBk6lurL-XOjfZSCIMyOn_atOqMj3-Sp"
+                "Authorization": "Api-Key **код**"
+
             }
     
             response = req.post(url, headers=headers, json=prompt)
@@ -124,3 +126,4 @@ class FakeReviews():
         s3_hook = S3Hook("my_conn_S3")
         pickle_ids_obj = pickle.dumps(self.ids)
         s3_hook.load_bytes(pickle_ids_obj, "data/ids2.pkl", bucket_name="fake-reviews", replace=True)
+
