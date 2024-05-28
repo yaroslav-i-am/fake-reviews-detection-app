@@ -10,15 +10,10 @@
 
 **NLP:** BagOfWords, Word2Vec, fastText, YandexGPT, `nltk`, `gensim`, `pymorphy`, `textstat`
 
-**Deploy:** Streamlit, Apache AirFlow, S3, 
+**Deploy:** Streamlit, Apache AirFlow, S3
 
 ## Описание данных
-
-## Разведочный анализ данных
-
-## Аннотация
-
-The app is being developed to be the state of the art solution for goods' fake reviews detection. The fake news are generated via the YandexGPT LLM, while the real are obtained via Kaggle platform datasets and scraping algorithms.
+\<placeholder>
 
 ## Авторы
 <table cellpadding="0" cellspacing="0" border="0">
