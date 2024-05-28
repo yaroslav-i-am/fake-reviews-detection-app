@@ -5,9 +5,12 @@
 Разработка системы, способной автоматически обнаруживать потенциально фейковые рецензии на основе их содержания и синтаксических особенностей.
 
 ## Используемые технологии
-ML: LogReg, XGBoost, RandomForest, 
-NLP: BagOfWords, Word2Vec, fastText, YandexGPT, `nltk`, `gensim`, `pymorphy`, `textstat`
-Deploy: Streamlit, Apache AirFlow, S3, 
+
+**ML:** LogReg, XGBoost, RandomForest, 
+
+**NLP:** BagOfWords, Word2Vec, fastText, YandexGPT, `nltk`, `gensim`, `pymorphy`, `textstat`
+
+**Deploy:** Streamlit, Apache AirFlow, S3, 
 
 ## Описание данных
 
